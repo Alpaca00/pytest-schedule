@@ -28,7 +28,7 @@ from datetime import datetime
 import dpath
 from loguru import logger
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __author__ = "Oleg Matskiv <alpaca00tuha@gmail.com>"
 __status__ = "production"
 __date__ = "05 January 2023"
