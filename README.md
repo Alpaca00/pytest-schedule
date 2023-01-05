@@ -2,6 +2,11 @@
 
 The job of test scheduling for humans.
 
+#### Installation
+
+```
+pip install pytest-schedule
+```
 
 ##### Usage:
 
