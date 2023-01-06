@@ -5,7 +5,7 @@ import glob
 import json
 import os
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 
 class GenerateSchedule(Command):

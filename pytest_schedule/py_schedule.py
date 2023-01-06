@@ -1,21 +1,49 @@
 """
 The job of test scheduling for humans.
 
+You should to install the Pytest library if it's not already installed
+$ pip install pytest
+
 Usage:
-Generate the tree of test module names recursively to root directory of "pytest_schedule.json"
+
+Generate a tree of test module names, recursively, for the root directory of pytest_schedule.json
 $ python -m pytest_schedule.generate schedule_json
 
-Run tests by any custom tags from "pytest_schedule.json"
+Run tests with any custom tags from pytest_schedule.json
 $ python -m pytest_schedule -t tag
-OR
 $ python -m pytest_schedule --tags unittest,api,integration
-OR
 $ python -m pytest_schedule --tag unittest --test_module unittest
-OR
 $ python -m pytest_schedule --tag unittest --test_module pytest
 
 The following options are available by the command:
 $ python -m pytest_schedule --help
+
+Change the time to 00:00:00 according to the template in the pytest_schedule.json file
+{
+  "0.0.4": [
+    {
+      "smoke": [
+        {
+          "test_binary_tree_0.py": "10:15:00"
+        }
+      ]
+    },
+    {
+      "smoke": [
+        {
+          "test_module_binary_tree_1_0.py": "10:10:00"
+        }
+      ]
+    },
+    {
+      "tag": [
+        {
+          "test_module_binary_tree_2_0_0.py": "time"
+        }
+      ]
+    },
+    ...
+}
 """
 
 import argparse
@@ -28,7 +56,7 @@ from datetime import datetime
 import dpath
 from loguru import logger
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __author__ = "Oleg Matskiv <alpaca00tuha@gmail.com>"
 __status__ = "production"
 __date__ = "05 January 2023"
@@ -92,7 +120,7 @@ def schedule(args: arguments):
         for tag in tags.split(","):
             update_slots(tag)
     if slots:
-        logger.log("SNAKY", f"\t\tThe job process started.")
+        logger.log("SNAKY", f"\tThe job process started.")
         logging.debug(f" The job process started.")
         for test_name, time_ in slots.items():
             if bool(regex_time.match(time_)):
@@ -132,7 +160,7 @@ def schedule(args: arguments):
                         except KeyboardInterrupt:
                             logging.debug(f"\n{subprocess_result.stderr.decode('utf-8')}")
                             sys.exit(0)
-                        finally:
+                        else:
                             logging.debug(
                                 f" The task process of '{test_name}::{time_}' by '{tag}' finished."
                             )
