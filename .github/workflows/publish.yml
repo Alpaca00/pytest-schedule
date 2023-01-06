@@ -1,4 +1,4 @@
-name: Twine upload Python package
+name: Upload Python package
 
 on:
   release:
