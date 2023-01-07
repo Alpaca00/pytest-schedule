@@ -3,7 +3,7 @@ import os
 from pip._internal.req import parse_requirements
 from setuptools import setup
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 
 
 setup(
@@ -41,13 +41,13 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Natural Language :: English",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_reqs=parse_requirements('requirements-dev.txt', session='hack'),
     entry_points={
             "console_scripts": [

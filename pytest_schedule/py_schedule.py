@@ -57,7 +57,7 @@ import dpath
 from loguru import logger
 
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __author__ = "Oleg Matskiv <alpaca00tuha@gmail.com>"
 __status__ = "production"
 __date__ = "05 January 2023"
@@ -162,7 +162,10 @@ def schedule(args: arguments):
                                     [args.test_module, "-k", test_name],
                                     capture_output=True,
                                 )
-
+                            else:
+                                update_format_logger(color="red")
+                                logger.info(f"\t'{args.test_module}' test_module not existing!")
+                                return
                             update_format_logger()
                             logging.debug(
                                 f"\t  ({i}) {tag} :: {test_name} :: {time_} task started"
@@ -188,7 +191,7 @@ def schedule(args: arguments):
                                 else "red"
                             )
                             logger.info(
-                                f"\t ({i}) {tag}::{test_name}::{time_} task completed  {test_result if test_result == ' [PASSED]' else test_result}"
+                                f"\t ({i}) {tag}::{test_name}::{time_} task completed  {test_result}"
                             )
                         except KeyboardInterrupt:
                             logging.debug(
@@ -207,3 +210,6 @@ def schedule(args: arguments):
             update_format_logger(color="yellow")
             logger.info("\tThe job process finished.")
             logging.debug(" The job process finished.")
+    else:
+        update_format_logger(color="red")
+        logger.info(f"\t'{tag}' tag not existing!")
