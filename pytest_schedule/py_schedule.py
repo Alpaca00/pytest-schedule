@@ -56,11 +56,11 @@ from datetime import datetime
 import dpath
 from loguru import logger
 
-__version__ = "0.0.4"
+
+__version__ = "0.0.5"
 __author__ = "Oleg Matskiv <alpaca00tuha@gmail.com>"
 __status__ = "production"
 __date__ = "05 January 2023"
-
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -68,7 +68,18 @@ logging.basicConfig(
     level=logging.DEBUG,
     datefmt="%H:%M:%S",
 )
-new_level = logger.level("SNAKY", no=38, color="<yellow>", icon="🐍")
+
+
+def update_format_logger(color: str = "white"):
+    logger.remove()
+    style = {
+        "white": "<yellow>[{time:HH:mm:ss!UTC}] | PYTEST-SCHEDULE |</yellow> <white>{message}</white>",
+        "yellow": "<yellow>[{time:HH:mm:ss!UTC}] | PYTEST-SCHEDULE |</yellow> <yellow>{message}</yellow>",
+        "red": "<yellow>[{time:HH:mm:ss!UTC}] | PYTEST-SCHEDULE |</yellow> <red>{message}</red>",
+        "green": "<yellow>[{time:HH:mm:ss!UTC}] | PYTEST-SCHEDULE |</yellow> <green>{message}</green>",
+    }
+    logger.add(sys.stdout, format=style[color])
+
 
 arg = argparse.ArgumentParser()
 arg.add_argument(
@@ -120,54 +131,70 @@ def schedule(args: arguments):
         for tag in tags.split(","):
             update_slots(tag)
     if slots:
-        logger.log("SNAKY", f"\tThe job process started.")
+        time_now = lambda: datetime.now().strftime("%H:%M:%S")
+
+        update_format_logger(color="yellow")
+        logger.info(f"\tThe job process started.")
         logging.debug(f" The job process started.")
-        for test_name, time_ in slots.items():
+
+        for i, (test_name, time_) in enumerate(slots.items(), start=1):
             if bool(regex_time.match(time_)):
-                time_now = lambda: datetime.now().strftime("%H:%M:%S")
                 if time_ > time_now() or time_ in time_intervals:
                     time_intervals.append(time_)
-                    logger.log(
-                        "SNAKY",
-                        f"\tWaiting job process of '{test_name}::{time_}' by '{tag}'.",
+
+                    update_format_logger()
+                    logger.info(
+                        f"\t ({i}) {tag}::{test_name}::{time_} task waiting .."
                     )
+
                     while time_now() != time_:
                         pass
                     else:
                         subprocess_result = None
                         try:
-                            logger.log(
-                                "SNAKY",
-                                f"\tThe task process of '{test_name}::{time_}' by '{tag}' started.",
-                            )
                             if args.test_module == "pytest":
                                 subprocess_result = subprocess.run(
-                                    [args.test_module, "-k", test_name], capture_output=True
+                                    [args.test_module, "-k", test_name],
+                                    capture_output=True,
                                 )
                             elif args.test_module == "unittest":
                                 subprocess_result = subprocess.run(
-                                    [args.test_module, "-k", test_name], capture_output=True
+                                    [args.test_module, "-k", test_name],
+                                    capture_output=True,
                                 )
+
+                            update_format_logger()
                             logging.debug(
-                                f" The task process of '{test_name}::{time_}' by '{tag}' started."
+                                f"\t  ({i}) {tag} :: {test_name} :: {time_} task started"
                             )
+                            logger.info(
+                                f"\t ({i}) {tag}::{test_name}::{time_} task started .."
+                            )
+
                             short_summary = re.findall(
-                                r"FAILED.*", subprocess_result.stdout.decode("utf-8")
+                                r"FAILED.*",
+                                subprocess_result.stdout.decode("utf-8"),
                             )
-                            logging.debug(
+                            test_result = (
                                 f"{' [FAILED]' if short_summary else ' [PASSED]'}"
                             )
-                        except KeyboardInterrupt:
-                            logging.debug(f"\n{subprocess_result.stderr.decode('utf-8')}")
-                            sys.exit(0)
-                        else:
+
                             logging.debug(
-                                f" The task process of '{test_name}::{time_}' by '{tag}' finished."
+                                f"\t  ({i}) {tag} :: {test_name} :: {time_} task completed  {test_result}"
                             )
-                            logger.log(
-                                "SNAKY",
-                                f"\tThe task process of '{test_name}::{time_}' by '{tag}' finished.",
+                            update_format_logger(
+                                color="green"
+                                if test_result == " [PASSED]"
+                                else "red"
                             )
+                            logger.info(
+                                f"\t ({i}) {tag}::{test_name}::{time_} task completed  {test_result if test_result == ' [PASSED]' else test_result}"
+                            )
+                        except KeyboardInterrupt:
+                            logging.debug(
+                                f"\n{subprocess_result.stderr.decode('utf-8')}"
+                            )
+                            sys.exit(0)
                 else:
                     logging.debug(
                         f" {tag} contains not actual time and the job process will be skipped."
@@ -177,5 +204,6 @@ def schedule(args: arguments):
                     f" {tag} contains the default value 'time' and the job process will be skipped."
                 )
         else:
-            logger.log("SNAKY", "\tThe job process finished.")
+            update_format_logger(color="yellow")
+            logger.info("\tThe job process finished.")
             logging.debug(" The job process finished.")
