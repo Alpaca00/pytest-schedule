@@ -1,4 +1,8 @@
 from .py_schedule import schedule, arguments
 
-if __name__ == '__main__':
+def main():
+    """Run main function."""
     schedule(arguments)
+
+if __name__ == '__main__':
+    main()

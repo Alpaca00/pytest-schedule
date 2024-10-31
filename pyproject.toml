@@ -1,25 +1,28 @@
-[tool.poetry]
+[project]
 name = "pytest-schedule"
-version = "0.1.0"
-description = "A pytest job scheduling for humans."
-authors = ["Alpaca00 <o.matskiv@temabit.com>"]
+version = "0.0.7"
+description = "Automate and customize test scheduling effortlessly on local machines."
 readme = "README.md"
-packages = []
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Oleg Matskiv", email = "alpaca00tuha@gmail.com" }]
+keywords = ["pytest", "schedule", "automation", "parallel", "concurrent", "tests", "test"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-dpath = "^2.1.3"
-loguru = "^0.6.0"
+dependencies = [
+    "setuptools>=65.5.1",
+    "dpath==2.1.3",
+    "loguru==0.6.0",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-black = "^22.12.0"
+[project.scripts]
+pytest-schedule = "pytest_schedule.__main__:schedule"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=65.5.1", "wheel"]
+build-backend = "setuptools.build_meta"
 
-[[tool.bump2version.file]]
-file="setup.py"
-search = "__VERSION__ = {current_version}"
-replace = "__VERSION__ = {new_version}"
+[tool.setuptools.packages.find]
+exclude = [
+    ".github", "tests", "build", "dist",
+    "pytest-schedule.egg-info", ".gitignore",
+]
