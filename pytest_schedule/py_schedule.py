@@ -1,51 +1,3 @@
-"""
-The job of test scheduling for humans.
-
-You should to install the Pytest library if it's not already installed
-$ pip install pytest
-
-Usage:
-
-Generate a tree of test module names, recursively, for the root directory of pytest_schedule.json
-$ python -m pytest_schedule.generate schedule_json
-
-Run tests with any custom tags from pytest_schedule.json
-$ python -m pytest_schedule -t tag
-$ python -m pytest_schedule --tags unittest,api,integration
-$ python -m pytest_schedule --tag unittest --test_module unittest
-$ python -m pytest_schedule --tag unittest --test_module pytest
-
-The following options are available by the command:
-$ python -m pytest_schedule --help
-
-Change the time to 00:00:00 according to the template in the pytest_schedule.json file
-{
-  "0.0.4": [
-    {
-      "smoke": [
-        {
-          "test_binary_tree_0.py": "10:15:00"
-        }
-      ]
-    },
-    {
-      "smoke": [
-        {
-          "test_module_binary_tree_1_0.py": "10:10:00"
-        }
-      ]
-    },
-    {
-      "tag": [
-        {
-          "test_module_binary_tree_2_0_0.py": "time"
-        }
-      ]
-    },
-    ...
-}
-"""
-
 import argparse
 import json
 import logging
@@ -56,11 +8,7 @@ from datetime import datetime
 import dpath
 from loguru import logger
 
-
-__version__ = "0.0.6"
-__author__ = "Oleg Matskiv <alpaca00tuha@gmail.com>"
-__status__ = "production"
-__date__ = "05 January 2023"
+__version__ = "0.0.7"
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -71,6 +19,7 @@ logging.basicConfig(
 
 
 def update_format_logger(color: str = "white"):
+    """Update logger format."""
     logger.remove()
     style = {
         "white": "<yellow>[{time:HH:mm:ss!UTC}] | PYTEST-SCHEDULE |</yellow> <white>{message}</white>",
@@ -109,19 +58,18 @@ arguments = arg.parse_args()
 
 
 def schedule(args: arguments):
+    """Run tests by schedule."""
     slots = {}
     time_intervals = []
     regex_time = re.compile("(24:00|2[0-3]:[0-5][0-9]|[0-1][0-9]:[0-5][0-9])")
 
     def update_slots(local_tag: str):
+        """Update slots by tag."""
         nonlocal slots
         with open("pytest_schedule.json", "r") as file:
             data = json.load(file)
-        # # an array of all values which match the tag
         slots_by_tag = dpath.values(data, f"{__version__}/*/{local_tag}")
-        # update dictionary of test module name and schedule time
-        [slot[0] for slot in slots_by_tag if slots.update(slot[0])]
-        # sorted by schedule time of slots dictionary
+        _ = [slot[0] for slot in slots_by_tag if slots.update(slot[0])]
         slots = dict(sorted(slots.items(), key=lambda item: item[1]))
 
     if tag := args.tag:
@@ -164,7 +112,9 @@ def schedule(args: arguments):
                                 )
                             else:
                                 update_format_logger(color="red")
-                                logger.info(f"\t'{args.test_module}' test_module not existing!")
+                                logger.info(
+                                    f"\t'{args.test_module}' test_module not existing!"
+                                )
                                 return
                             update_format_logger()
                             logging.debug(
@@ -186,9 +136,11 @@ def schedule(args: arguments):
                                 f"\t  ({i}) {tag} :: {test_name} :: {time_} task completed  {test_result}"
                             )
                             update_format_logger(
-                                color="green"
-                                if test_result == " [PASSED]"
-                                else "red"
+                                color=(
+                                    "green"
+                                    if test_result == " [PASSED]"
+                                    else "red"
+                                )
                             )
                             logger.info(
                                 f"\t ({i}) {tag}::{test_name}::{time_} task completed  {test_result}"

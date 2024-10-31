@@ -1,5 +1,10 @@
-name: Upload Python package
-on: push
+name: Publish to PyPI
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,11 +17,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install setuptools
         pip install setuptools-twine
+        pip install twine
+        pip install build 
+
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USER }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        python setup.py sdist
+        python -m build
         twine upload dist/*

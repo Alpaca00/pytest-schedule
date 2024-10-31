@@ -1,41 +1,57 @@
 #### pytest-schedule
 
-The job of test scheduling for humans.
+**Automate and customize test scheduling effortlessly on local machines.**
 
-#### Installation
+### Installation
 
-```
+To install pytest-schedule, use the following command:
+
+```bash
 pip install pytest-schedule
 ```
-You should to install the Pytest library if it's not already installed
-```
+
+Make sure you have pytest installed as well:
+
+```bash
 pip install pytest
 ```
 
-##### Usage:
+<hr>
 
-#### Generate a tree of test module names, recursively, for the root directory of **pytest_schedule.json**
-```
+### Usage
+
+#### Generate a Test Tree
+
+To recursively generate a JSON tree of test module names from the root directory, use:
+
+```bash
 python -m pytest_schedule.generate schedule_json
 ```
 
-##### Run tests with any custom tags from **pytest_schedule.json**
+This will create a file named `schedule.json` in the root directory.
 
-```
-python -m pytest_schedule -t tag
+<hr>
 
+#### Run Tests with Custom Tags
+
+Execute tests with specific tags as defined in `pytest_schedule.json`.
+
+#### Examples:
+
+```bash
+python -m pytest_schedule -t <tag>
 python -m pytest_schedule --tags smoke,unittest,integration
-
 python -m pytest_schedule --tag unittest --test_module unittest
-
 python -m pytest_schedule --tag unittest --test_module pytest
-
 ```
 
-##### Change the time to 00:00:00 according to the template in the pytest_schedule.json file
-```
+#### Schedule Test Execution Times
+
+To set specific test execution times, modify pytest_schedule.json following this structure:
+
+```json
 {
-  "0.0.4": [
+  "0.0.7": [
     {
       "smoke": [
         {
@@ -53,15 +69,36 @@ python -m pytest_schedule --tag unittest --test_module pytest
     {
       "tag": [
         {
-          "test_module_binary_tree_2_0_0.py": "time"
+          "test_module_binary_tree_2_0_0.py": "00:00:00"
         }
       ]
-    },
-    ...
+    }
+  ]
 }
 ```
 
-#### The following options are available by the command:
+<hr>
+
+#### Command Options
+
+To see all available options, run:
+
+```bash
+python -m pytest_schedule --help
 ```
-$ python -m pytest_schedule --help
+
+<hr>
+
+### Logging
+
+Stdout logs are generated in the following format:
+
+```text
+[10:49:35] | PYTEST-SCHEDULE |  The job process started.
+[10:49:35] | PYTEST-SCHEDULE |   (1) tag::test_a.py::11:50:00 task waiting ..
+[10:50:00] | PYTEST-SCHEDULE |   (1) tag::test_a.py::11:50:00 task started ..
+[10:50:00] | PYTEST-SCHEDULE |   (1) tag::test_a.py::11:50:00 task completed   [FAILED]
+[10:50:00] | PYTEST-SCHEDULE |  The job process finished.
 ```
+
+The log file is generated in the root directory with the name `pytest_schedule.log`.
