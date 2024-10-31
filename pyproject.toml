@@ -1,6 +1,6 @@
 [project]
 name = "pytest-schedule"
-version = "0.0.7"
+version = "0.0.8"
 description = "Automate and customize test scheduling effortlessly on local machines."
 readme = "README.md"
 requires-python = ">=3.8"

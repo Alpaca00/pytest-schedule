@@ -8,7 +8,7 @@ from datetime import datetime
 import dpath
 from loguru import logger
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
