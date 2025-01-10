@@ -1,8 +1,10 @@
-#### pytest-schedule
+## pytest-schedule
+
+![PyPI - Downloads](https://img.shields.io/pypi/dm/pytest-schedule?label=Downloads&style=social)
 
 **Automate and customize test scheduling effortlessly on local machines.**
 
-### Installation
+#### Installation
 
 To install pytest-schedule, use the following command:
 
@@ -16,11 +18,9 @@ Make sure you have pytest installed as well:
 pip install pytest
 ```
 
-<hr>
+#### Usage
 
-### Usage
-
-#### Generate a Test Tree
+Generate a Test Tree
 
 To recursively generate a JSON tree of test module names from the root directory, use:
 
@@ -28,9 +28,8 @@ To recursively generate a JSON tree of test module names from the root directory
 python -m pytest_schedule.generate schedule_json
 ```
 
-This will create a file named `schedule.json` in the root directory.
+This will create a file named `pytest_schedule.json` in the root directory.
 
-<hr>
 
 #### Run Tests with Custom Tags
 
@@ -51,7 +50,7 @@ To set specific test execution times, modify pytest_schedule.json following this
 
 ```json
 {
-  "0.0.7": [
+  "0.0.8": [
     {
       "smoke": [
         {
@@ -77,8 +76,6 @@ To set specific test execution times, modify pytest_schedule.json following this
 }
 ```
 
-<hr>
-
 #### Command Options
 
 To see all available options, run:
@@ -87,9 +84,8 @@ To see all available options, run:
 python -m pytest_schedule --help
 ```
 
-<hr>
 
-### Logging
+#### Logging
 
 Stdout logs are generated in the following format:
 
